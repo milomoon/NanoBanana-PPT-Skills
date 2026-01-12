@@ -13,13 +13,8 @@ from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from kling_api import KlingVideoGenerator
-try:
-    from transition_prompt_generator import TransitionPromptGenerator
-    CLAUDE_API_AVAILABLE = True
-except Exception:
-    CLAUDE_API_AVAILABLE = False
-from simple_transition_prompt_generator import SimpleTransitionPromptGenerator
 from prompt_file_reader import PromptFileReader
+from simple_transition_prompt_generator import SimpleTransitionPromptGenerator
 
 
 class VideoMaterialsGenerator:
@@ -45,18 +40,16 @@ class VideoMaterialsGenerator:
         """
         self.kling_client = kling_client or KlingVideoGenerator()
 
-        # 选择提示词生成器（优先级：文件 > 自定义 > 简化版 > 完整版）
+        # 选择提示词生成器（优先级：文件 > 自定义 > 简化版）
         if prompts_file:
             self.prompt_generator = PromptFileReader(prompts_file)
             print(f"✅ 使用提示词文件: {prompts_file}")
         elif prompt_generator:
             self.prompt_generator = prompt_generator
-        elif use_simple_prompts or not CLAUDE_API_AVAILABLE:
-            self.prompt_generator = SimpleTransitionPromptGenerator()
-            print(f"✅ 使用简化版提示词生成器（不依赖Claude API）")
         else:
-            self.prompt_generator = TransitionPromptGenerator()
-            print(f"✅ 使用完整版提示词生成器（Claude API）")
+            # 默认使用简化版（不依赖任何 API）
+            self.prompt_generator = SimpleTransitionPromptGenerator()
+            print(f"✅ 使用简化版提示词生成器（通用模板）")
 
         self.max_concurrent = max_concurrent
 
