@@ -417,13 +417,18 @@ open outputs/TIMESTAMP/index.html
 
 ### 高级使用：生成带转场视频的 PPT
 
-**重要说明：转场视频需要先生成转场提示词！**
+#### 1. 生成 PPT 图片
 
-有两种方式生成转场提示词：
+```bash
+python3 generate_ppt.py \
+  --plan my_slides_plan.json \
+  --style styles/gradient-glass.md \
+  --resolution 2K
+```
 
-#### 方式一：使用 Claude Code 分析图片（推荐）
+#### 2. 使用 Claude Code 生成转场提示词（必需）
 
-在 Claude Code 中，让它分析生成的 PPT 图片：
+在 Claude Code 中执行：
 
 ```
 我刚生成了 5 页 PPT 图片在 outputs/TIMESTAMP/images 目录下。
@@ -437,42 +442,13 @@ Claude Code 会：
 3. 生成精准的转场描述
 4. 保存为 JSON 文件
 
-#### 方式二：使用通用模板（快速但不够精准）
-
-如果不提供 `--prompts-file`，系统会使用通用的转场模板。
-
----
-
-#### 1. 生成 PPT 图片（同上）
-
-```bash
-python3 generate_ppt.py \
-  --plan my_slides_plan.json \
-  --style styles/gradient-glass.md \
-  --resolution 2K
-```
-
-#### 2. 生成转场提示词（推荐：使用 Claude Code）
-
-在 Claude Code 中执行上述提示，或者跳过此步骤使用通用模板。
-
 #### 3. 生成转场视频
-
-**如果有 Claude Code 生成的提示词文件：**
 
 ```bash
 python3 generate_ppt_video.py \
   --slides-dir outputs/TIMESTAMP/images \
   --output-dir outputs/TIMESTAMP_video \
   --prompts-file outputs/TIMESTAMP/transition_prompts.json
-```
-
-**如果使用通用模板：**
-
-```bash
-python3 generate_ppt_video.py \
-  --slides-dir outputs/TIMESTAMP/images \
-  --output-dir outputs/TIMESTAMP_video
 ```
 
 这会生成：
